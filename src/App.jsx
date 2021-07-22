@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -11,30 +10,12 @@ import TaskDetails from "./components/TaskDetails";
 import "./App.css";
 
 const App = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: "1",
-      title: "Estudar programação",
-      completed: false,
-    },
-
-    {
-      id: "2",
-      title: "Ler livros",
-      completed: true,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      const { data } = await axios.get(
-        "https://jsonplaceholder.cypress.io/todos?_limit=10"
-      );
+    var storageTasks = localStorage.getItem("storageTasks");
 
-      setTasks(data);
-    };
-
-    fetchTasks();
+    setTasks(JSON.parse(storageTasks));
   }, []);
 
   const handleTaskClick = (taskId) => {
@@ -58,18 +39,23 @@ const App = () => {
     ];
 
     setTasks(newTasks);
+
+    localStorage.setItem("storageTasks", JSON.stringify(newTasks));
   };
 
   const handleTaskDeletion = (taskId) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
 
     setTasks(newTasks);
+
+    localStorage.setItem("storageTasks", JSON.stringify(newTasks));
   };
 
   return (
     <Router>
       <div className="container">
         <Header />
+
         <Route
           path="/"
           exact
